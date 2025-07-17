@@ -1,10 +1,32 @@
-export const productsDummy = [
-    { id: 1, Name: "Product 1", Price: "$10", Category: "Category A" },
-    { id: 2, Name: "Product 2", Price: "$20", Category: "Category B" },
-    { id: 3, Name: "Product 3", Price: "$30", Category: "Category C" },
-    { id: 4, Name: "Product 4", Price: "$40", Category: "Category D" },
-    { id: 5, Name: "Product 5", Price: "$50", Category: "Category E" },
-    { id: 6, Name: "Product 6", Price: "$60", Category: "Category F" },
-    { id: 7, Name: "Product 7", Price: "$70", Category: "Category G" },
-    { id: 8, Name: "Product 8", Price: "$80", Category: "Category H" },
-]
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    category: string;
+}
+
+declare global {
+    // eslint-disable-next-line no-var
+    let products: Product[];
+}
+
+if (!globalThis.products) {
+    globalThis.products = [
+        { id: 1, name: "Product 1", price: 10, category: "Category A" },
+        { id: 2, name: "Product 2", price: 20, category: "Category B" },
+        { id: 3, name: "Product 3", price: 30, category: "Category C" },
+        { id: 4, name: "Product 4", price: 40, category: "Category D" },
+        { id: 5, name: "Product 5", price: 50, category: "Category E" },
+        { id: 6, name: "Product 6", price: 60, category: "Category F" },
+        { id: 7, name: "Product 7", price: 70, category: "Category G" },
+        { id: 8, name: "Product 8", price: 80, category: "Category H" },
+    ];
+}
+
+export function getProductById(id: number) {
+    return globalThis.products.find((product) => product.id === id);
+}
+
+export function getAllProducts() {
+    return globalThis.products;
+}

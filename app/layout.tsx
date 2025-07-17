@@ -35,7 +35,7 @@ export default function RootLayout({
           <nav>
             <ul className="flex space-x-4">
               <li>
-                <Link href="/product" className="text-slate-500 font-bold hover:underline">
+                <Link href="/products" className="text-slate-500 font-bold hover:underline">
                   Product
                 </Link>
               </li>

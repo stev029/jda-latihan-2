@@ -1,0 +1,5 @@
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - lightningcss.android-arm64.node
+  - sharp
+  - unrs-resolver
