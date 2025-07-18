@@ -1,5 +1,7 @@
 onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - lightningcss.android-arm64.node
+  - "@prisma/client"
+  - "@prisma/engines"
+  - "@tailwindcss/oxide"
+  - prisma
   - sharp
   - unrs-resolver

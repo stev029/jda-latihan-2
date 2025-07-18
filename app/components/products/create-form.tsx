@@ -1,11 +1,12 @@
 "use client";
 
 import { createProduct } from "@/app/lib/action";
-import { useState } from "react";
+import { JSX, useState } from "react";
 
 interface ColProps {
   label: string;
   field: string;
+  render?: (value: string) => JSX.Element;
 }
 
 export default function CreateForm({ columns }: { columns: ColProps[] }) {
@@ -22,16 +23,18 @@ export default function CreateForm({ columns }: { columns: ColProps[] }) {
         {columns.map(col => (
           <div key={col.field}>
             <label htmlFor={col.field} className="block mb-1 font-medium capitalize">{col.label}</label>
-            <input
-              id={col.field}
-              name={col.field}
-              type={col.field?.toLowerCase().includes("price") ? "number" : "text"}
-              value={form[col.field]}
-              onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
-              required
-              min={col.field?.toLowerCase().includes("price") ? 0 : undefined}
-            />
+            {col.render ? col.render(form[col.field]) :
+              <input
+                id={col.field}
+                name={col.field}
+                type={col.field?.toLowerCase().includes("price") ? "number" : "text"}
+                value={form[col.field]}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 rounded"
+                required
+                min={col.field?.toLowerCase().includes("price") ? 0 : undefined}
+              />
+            }
           </div>
         ))}
         <button

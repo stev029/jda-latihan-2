@@ -1,3 +1,4 @@
+import { prisma } from "@/app/lib/database";
 import { getAllProducts } from "@/app/lib/dummy";
 import { productSchema } from "@/app/lib/schema";
 import { z } from "zod";
@@ -9,19 +10,15 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const parsedId = parseInt(id);
-  if (isNaN(parsedId)) {
-    return Response.json({ message: "Invalid product ID" }, { status: 400 });
-  }
 
-  const productIndex = products.findIndex(
-    (p: { id: number }) => p.id === parsedId,
-  );
-  if (productIndex === -1) {
+  const product = await prisma.product.findUnique({
+    where: { id },
+  });
+  if (!product) {
     return Response.json({ message: "Product not found" }, { status: 404 });
   }
 
-  return Response.json(products[productIndex], { status: 200 });
+  return Response.json(product, { status: 200 });
 }
 
 export async function PUT(
@@ -30,26 +27,24 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const parseId = parseInt(id);
-
-    if (isNaN(parseId)) {
-      return Response.json({ message: "Invalid product ID" }, { status: 400 });
-    }
 
     const body = await request.json();
-    const validatedFields = productSchema.parse(body);
+    const validatedFields = await productSchema.parseAsync(body);
 
-    const productIndex = products.findIndex(
-      (p: { id: number }) => p.id === parseId,
-    );
+    const productIndex = await prisma.product.findFirst({
+      where: { id },
+    });
 
-    if (productIndex === -1) {
+    if (!productIndex) {
       return Response.json({ message: "Product not found" }, { status: 404 });
     }
 
-    products[productIndex] = { ...products[productIndex], ...validatedFields };
+    const updatedProduct = await prisma.product.update({
+      where: { id },
+      data: validatedFields,
+    });
 
-    return Response.json(products[productIndex], {
+    return Response.json(updatedProduct, {
       status: 200,
       headers: [["Content-Type", "application/json"]],
     });
@@ -67,21 +62,18 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const parsedId = parseInt(id);
 
-    if (isNaN(parsedId)) {
-      return Response.json({ message: "Invalid product ID" }, { status: 400 });
-    }
+    const product = await prisma.product.findUnique({
+      where: { id },
+    });
 
-    const productIndex = products.findIndex(
-      (p: { id: number }) => p.id === parsedId,
-    );
-
-    if (productIndex === -1) {
+    if (!product) {
       return Response.json({ message: "Product not found" }, { status: 404 });
     }
 
-    products.splice(productIndex, 1); // Remove the product from the array
+    await prisma.product.delete({
+      where: { id },
+    });
 
     return new Response(null, { status: 204 }); // 204 No Content for successful deletion
   } catch (error: any) {
